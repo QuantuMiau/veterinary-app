@@ -178,3 +178,11 @@ export default function Home() {
     </SafeAreaProvider>
   );
 }
+
+/* 
+
+(\_/)    /\_/\ 
+( ^_^)  ( ^.^ )
+/ >🥕    
+
+*/

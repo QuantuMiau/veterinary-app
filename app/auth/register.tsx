@@ -23,7 +23,7 @@ export default function register() {
   const globalS = globalStyles();
   const router = useRouter();
 
-  // states
+  // ** states
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
   const [motherLastName, setMotherLastName] = useState("");
@@ -34,6 +34,7 @@ export default function register() {
   const [loadingButton, setLoadingButton] = useState(false);
   const [erroMsg, setErroMsg] = useState("");
 
+  // * functions
   function register() {
     const errorVal = registerValidator(
       name,
@@ -74,6 +75,7 @@ export default function register() {
     setPhone("");
     setPassword("");
   }
+
   return (
     <SafeAreaProvider>
       <SafeAreaView>
@@ -168,3 +170,11 @@ export default function register() {
     </SafeAreaProvider>
   );
 }
+
+/* 
+
+(\_/)    /\_/\ 
+( ^_^)  ( ^.^ )
+/ >🥕    
+
+*/
