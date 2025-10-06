@@ -172,16 +172,6 @@ export default function Home() {
             >
               Registrarse
             </Button>
-
-            <Button
-              type="danger"
-              onPress={() => {
-                console.log("botón presionado");
-              }}
-              loading={true}
-            >
-              Botón eliminar
-            </Button>
           </View>
         </ScrollView>
       </SafeAreaView>
