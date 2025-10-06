@@ -11,7 +11,7 @@ import {
   useFonts,
 } from "@expo-google-fonts/league-spartan";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 
 import { useState } from "react";
 import {
@@ -30,6 +30,7 @@ export default function login() {
   const colorScheme = useColorScheme();
   const colors = colorScheme === "dark" ? Colors.dark : Colors.light;
   const router = useRouter();
+  const navigation = useNavigation();
   // estados
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -86,9 +87,10 @@ export default function login() {
       return;
     }
     setErrorMsg("");
+
+    router.replace("/(tabs)/home");
     setEmail("");
     setPassword("");
-    router.replace("/(tabs)/home");
   }
   return (
     <SafeAreaProvider>
