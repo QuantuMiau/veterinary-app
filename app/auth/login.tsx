@@ -15,6 +15,7 @@ import { useNavigation, useRouter } from "expo-router";
 
 import { useState } from "react";
 import {
+  Alert,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -36,6 +37,7 @@ export default function login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
+  const [loadingButton, setLoadingButton] = useState(false);
 
   const [fontsLoaded] = useFonts({
     LeagueSpartan_600SemiBold,
@@ -87,8 +89,19 @@ export default function login() {
       return;
     }
     setErrorMsg("");
+    setLoadingButton(true);
 
-    router.replace("/(tabs)/home");
+    setTimeout(() => {
+      Alert.alert("", "Sesion iniciada", [
+        {
+          text: "OK",
+          onPress: () => {
+            setLoadingButton(false);
+            router.replace("/(tabs)/home");
+          },
+        },
+      ]);
+    }, 1000);
     setEmail("");
     setPassword("");
   }
@@ -155,6 +168,7 @@ export default function login() {
               onPress={() => {
                 login(email, password);
               }}
+              loading={loadingButton}
             >
               Iniciar Sesion
             </Button>
