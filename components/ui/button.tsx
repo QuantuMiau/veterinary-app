@@ -80,6 +80,7 @@ const styles = StyleSheet.create({
     borderRadius: 13,
     alignItems: "center",
     justifyContent: "center",
+    minHeight: 40,
   },
   content: {
     flexDirection: "row",
@@ -89,7 +90,7 @@ const styles = StyleSheet.create({
   primary: { backgroundColor: "#2260FF" },
   secondary: { backgroundColor: "#CAD6FF" },
   danger: { backgroundColor: "#DC2626" },
-  disabled: { opacity: 0.7 },
+  disabled: { opacity: 0.7, minHeight: 50 },
   text: {
     color: "#fff",
     fontSize: 20,
