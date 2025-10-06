@@ -49,7 +49,7 @@ export const loginValidator = (email: string, password: string): string => {
     return "Ingrese la contraseña";
   }
 
-  if (!emailValidator(email)) {
+  if (!checkEmail(email)) {
     return "Correo invalido";
   }
   if (!passwordValidator(password)) {
@@ -79,7 +79,7 @@ export const registerValidator = (
   if (!nameValidator(name)) {
     return "Nombre debe tener mínimo 2 caracteres";
   }
-  if (!checkEmail(email)) {
+  if (checkEmail(email)) {
     return `Correo invalido`;
   }
   if (!phoneValidator(phone)) {
@@ -107,5 +107,5 @@ export const emailValidator = (email: string): string => {
     return "El email no es válido";
   }
 
-  return ""; // todo correcto
+  return "";
 };
