@@ -1,10 +1,12 @@
 import { Colors } from "@/constants/theme";
+import { globalStyles } from "@/styles/globalStyles";
 import { ScrollView, Text, useColorScheme, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
   const colorScheme = useColorScheme();
   const colors = colorScheme === "dark" ? Colors.dark : Colors.light;
+  const globalS = globalStyles();
   return (
     <SafeAreaProvider>
       <SafeAreaView>
