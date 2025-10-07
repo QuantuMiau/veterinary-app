@@ -14,16 +14,19 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
 import { useGlobalStyles } from "@/styles/globalStyles";
 import PayPalButton from "@/components/ui/paypal-button";
+import { useRouter } from "expo-router";
 
 export default function PaymentScreen() {
   const colorScheme = useColorScheme();
   const colors = colorScheme === "dark" ? Colors.dark : Colors.light;
   const globalS = useGlobalStyles();
+  const router = useRouter();
 
   const [remember, setRemember] = useState(false);
   const [cardNumber, setCardNumber] = useState("");
@@ -32,6 +35,7 @@ export default function PaymentScreen() {
   const [fullName, setFullName] = useState("");
   const [address, setaddress] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [loadingButton, setLoadingButton] = useState(false);
 
   function paymentForm() {
     const errorVal = paymentValidator(
@@ -41,17 +45,38 @@ export default function PaymentScreen() {
       fullName,
       address
     );
-    console.log(errorVal);
+    if (errorVal !== "") {
+      setErrorMsg(errorVal);
+      console.log(errorVal);
+      return;
+    }
+    setErrorMsg("");
+    setLoadingButton(true);
+
+    setTimeout(() => {
+      Alert.alert("", "Pago exitoso", [
+        {
+          text: "OK",
+          onPress: () => {
+            setLoadingButton(false);
+            router.replace("/(tabs)/cart");
+          },
+        },
+      ]);
+    }, 1000);
   }
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView>
+      <SafeAreaView style={{ flex: 1 }}>
         <ScrollView>
           <View style={styles.topHeader}>
             <Text style={styles.headerText}>Pago</Text>
           </View>
           <View style={globalS.container}>
+            <View style={globalS.errorMsg}>
+              <Text style={globalS.errorText}>{errorMsg}</Text>
+            </View>
             <Text style={globalS.label}> Número de tarjeta </Text>
             <TextInput
               placeholder="XXXX-XXXX-XXXX-XXXX"
@@ -106,7 +131,11 @@ export default function PaymentScreen() {
             </View>
 
             <View>
-              <Button type="primary" onPress={paymentForm}>
+              <Button
+                type="primary"
+                onPress={paymentForm}
+                loading={loadingButton}
+              >
                 Confirmar
               </Button>
             </View>
