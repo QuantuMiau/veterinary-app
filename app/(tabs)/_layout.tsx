@@ -25,6 +25,14 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="payment"
+        options={{
+          tabBarStyle: {
+            display: "none",
+          },
+        }}
+      />
     </Tabs>
   );
 }
