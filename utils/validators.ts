@@ -7,8 +7,10 @@ export const passwordValidator = (password: string) => {
   return password.length >= 5;
 };
 
-export const nameValidator = (name: string) => {
-  return name.length >= 2;
+export const nameValidator = (name: string): boolean => {
+  const hasMinimumLength = name.trim().length >= 3;
+  const isValidCharacters = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(name);
+  return hasMinimumLength && isValidCharacters;
 };
 
 export const phoneValidator = (phone: string) => {
@@ -105,6 +107,95 @@ export const emailValidator = (email: string): string => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
     return "El email no es válido";
+  }
+
+  return "";
+};
+
+// mascaras para pago
+export const cardNumberMask = (value: string) => {
+  return value
+    .replace(/\D/g, "")
+    .replace(/(\d{4})(?=\d)/g, "$1-")
+    .slice(0, 19);
+};
+export const expiryDateMask = (value: string) => {
+  return value
+    .replace(/\D/g, "")
+    .replace(/(\d{2})(?=\d)/g, "$1/")
+    .slice(0, 5);
+};
+export const cvvMask = (value: string) => {
+  return value.replace(/\D/g, "").slice(0, 3);
+};
+
+//validaciones de pago
+export const isValidCardNumber = (value: string): boolean => {
+  const digitsOnly = value.replace(/\D/g, "");
+  return digitsOnly.length === 16;
+};
+export const isValidExpiryDate = (value: string): boolean => {
+  const regex = /^(\d{2})\/(\d{2})$/;
+  const match = value.match(regex);
+
+  if (!match) return false;
+
+  const month = parseInt(match[1], 10);
+  const year = parseInt(match[2], 10);
+
+  const isMonthValid = month >= 1 && month <= 12;
+  const isYearValid = year !== 0;
+
+  return isMonthValid && isYearValid;
+};
+export const isValidCVV = (value: string): boolean => {
+  const digitsOnly = value.replace(/\D/g, "");
+  return /^\d{3}$/.test(digitsOnly);
+};
+
+export const paymentValidator = (
+  cardNumber: string,
+  expiryDate: string,
+  cvv: string,
+  fullName: string,
+  address: string
+): string => {
+  if (
+    isEmpty(cardNumber) &&
+    isEmpty(expiryDate) &&
+    isEmpty(cvv) &&
+    isEmpty(fullName) &&
+    isEmpty(address)
+  ) {
+    return "Ingrese todos los datos";
+  }
+
+  if (isEmpty(cardNumber)) {
+    return "Ingrese el número de tarjeta";
+  }
+  if (isEmpty(expiryDate)) {
+    return "Ingrese la fecha de expiración";
+  }
+  if (isEmpty(cvv)) {
+    return "Ingrese el número cvv";
+  }
+  if (isEmpty(fullName)) {
+    return "Ingrese el nombre del titular";
+  }
+  if (isEmpty(address)) {
+    return "Ingrese la dirección de la tarjeta";
+  }
+  if (!isValidCardNumber(cardNumber)) {
+    return "Numero de tarjeta invalido";
+  }
+  if (!isValidExpiryDate(expiryDate)) {
+    return "Fecha inválida";
+  }
+  if (!isValidCVV(cvv)) {
+    return "Número CVV  inválido";
+  }
+  if (!nameValidator(fullName)) {
+    return "Nombre inválido";
   }
 
   return "";
