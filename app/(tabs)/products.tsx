@@ -123,7 +123,7 @@ export default function ProductsScreen() {
       fontFamily: "LeagueSpartan_500Medium",
       color: "white",
     },
-    grid: { padding: 15 },
+    grid: { padding: 15, paddingBottom: 110 },
     productCard: {
       width: ITEM_WIDTH,
       marginBottom: 20,
@@ -168,7 +168,7 @@ export default function ProductsScreen() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={[styles.safeArea, { flex: 1 }]}>
         <View style={styles.header}>
           <TextInput
             placeholder="Buscar productos..."
@@ -196,7 +196,7 @@ export default function ProductsScreen() {
           </View>
         </View>
 
-        <View style={{ backgroundColor: colors.background }}>
+        <View style={{ flex: 1, backgroundColor: colors.background }}>
           <FlatList
             contentContainerStyle={styles.grid}
             data={filteredByFilter}
