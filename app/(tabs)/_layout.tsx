@@ -7,6 +7,7 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import Feather from "@expo/vector-icons/Feather";
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const colors = colorScheme === "dark" ? Colors.dark : Colors.light;
 
   return (
     <Tabs
@@ -17,11 +18,20 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
+        name="products"
+        options={{
+          title: "Productos",
+          tabBarIcon: ({ color }) => (
+            <Feather name="home" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="cart"
         options={{
           title: "Carrito",
           tabBarIcon: ({ color }) => (
-            <Feather name="shopping-cart" size={24} color="black" />
+            <Feather name="shopping-cart" size={24} color={color} />
           ),
         }}
       />
@@ -30,7 +40,7 @@ export default function TabLayout() {
         options={{
           title: "Perfil",
           tabBarIcon: ({ color }) => (
-            <Feather name="user" size={24} color="black" />
+            <Feather name="user" size={24} color={color} />
           ),
         }}
       />

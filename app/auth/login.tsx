@@ -97,7 +97,7 @@ export default function login() {
           text: "OK",
           onPress: () => {
             setLoadingButton(false);
-            router.replace("/(tabs)/home");
+            router.replace("/(tabs)/products");
           },
         },
       ]);
