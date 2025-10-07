@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/ui/header";
 import { Colors } from "@/constants/theme";
-import { globalStyles } from "@/styles/globalStyles";
+import { useGlobalStyles } from "@/styles/globalStyles";
 import { loginValidator } from "@/utils/validators";
 import {
   LeagueSpartan_400Regular,
@@ -13,7 +13,7 @@ import {
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useNavigation, useRouter } from "expo-router";
 
-import { useState } from "react";
+import { use, useState } from "react";
 import {
   Alert,
   Pressable,
@@ -45,7 +45,7 @@ export default function login() {
     LeagueSpartan_500Medium,
     LeagueSpartan_700Bold,
   });
-  const globalS = globalStyles();
+  const globalS = useGlobalStyles();
   const styles = StyleSheet.create({
     input: {
       borderColor: "#90AAF5",

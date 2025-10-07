@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Colors } from "@/constants/theme";
-import { globalStyles } from "@/styles/globalStyles";
+import { useGlobalStyles } from "@/styles/globalStyles";
 import { useState } from "react";
 import {
   Alert,
@@ -25,7 +25,7 @@ interface Product {
 export default function Cart() {
   const colorScheme = useColorScheme();
   const colors = colorScheme === "dark" ? Colors.dark : Colors.light;
-  const globalS = globalStyles();
+  const globalS = useGlobalStyles();
 
   const [products, setProducts] = useState<Product[]>([
     {

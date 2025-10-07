@@ -1,7 +1,7 @@
 import { Colors } from "@/constants/theme";
 import { StyleSheet, useColorScheme } from "react-native";
 
-export const globalStyles = () => {
+export const useGlobalStyles = () => {
   const colorScheme = useColorScheme();
   const colors = colorScheme === "dark" ? Colors.dark : Colors.light;
 
@@ -59,7 +59,7 @@ export const globalStyles = () => {
     headerText: {
       color: "#fff",
       fontSize: 24,
-      fontFamily: "LeagueSpartan_500Medium",
+      fontFamily: "LeagueSpartan_400Medium",
       textAlign: "center",
     },
   });

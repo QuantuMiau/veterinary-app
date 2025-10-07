@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/ui/header";
 import { Colors } from "@/constants/theme";
-import { globalStyles } from "@/styles/globalStyles";
+import { useGlobalStyles } from "@/styles/globalStyles";
 import { emailValidator } from "@/utils/validators";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -18,7 +18,7 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 export default function restorePass() {
   const colorScheme = useColorScheme();
   const colors = colorScheme === "dark" ? Colors.dark : Colors.light;
-  const globalS = globalStyles();
+  const globalS = useGlobalStyles();
   const router = useRouter();
 
   // * states
