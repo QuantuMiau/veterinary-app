@@ -123,7 +123,7 @@ export default function ProductsScreen() {
       fontFamily: "LeagueSpartan_500Medium",
       color: "white",
     },
-    grid: { padding: 15, paddingBottom: 110 },
+    grid: { padding: 15 },
     productCard: {
       width: ITEM_WIDTH,
       marginBottom: 20,
