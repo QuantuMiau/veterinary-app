@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Colors } from "@/constants/theme";
 import { useGlobalStyles } from "@/styles/globalStyles";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Alert,
@@ -27,6 +28,7 @@ export default function Cart() {
   const colorScheme = useColorScheme();
   const colors = colorScheme === "dark" ? Colors.dark : Colors.light;
   const globalS = useGlobalStyles();
+  const router = useRouter();
 
   const [products, setProducts] = useState<Product[]>([
     {
@@ -74,7 +76,7 @@ export default function Cart() {
     products.reduce((total, p) => total + p.price * p.quantity, 0).toFixed(2);
 
   const handlePay = () => {
-    Alert.alert("Pago", "Redirigiendo al pago...");
+    router.push("/payment/payment");
   };
 
   const styles = StyleSheet.create({
@@ -235,3 +237,10 @@ export default function Cart() {
     </SafeAreaProvider>
   );
 }
+/* 
+
+(\_/)    /\_/\ 
+( ^_^)  ( ^.^ )
+/ >🥕    
+
+*/

@@ -100,6 +100,10 @@ export default function Profile() {
     Alert.alert(`Opción seleccionada: ${option}`);
   };
 
+  const ordersHandle = () => {
+    router.push("/userTabs/orders");
+  };
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
@@ -124,7 +128,7 @@ export default function Profile() {
                 styles.option,
                 pressed && { backgroundColor: "#e9e9e991" },
               ]}
-              onPress={() => handlePress("Mis pedidos")}
+              onPress={() => ordersHandle()}
             >
               <Feather
                 name="package"
