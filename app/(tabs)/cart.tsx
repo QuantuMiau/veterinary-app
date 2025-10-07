@@ -11,8 +11,9 @@ import {
   Text,
   useColorScheme,
   View,
+  SafeAreaView,
 } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 interface Product {
   id: number;
@@ -78,8 +79,25 @@ export default function Cart() {
 
   const styles = StyleSheet.create({
     safeArea: { flex: 1 },
+    topHeader: {
+      backgroundColor: "#0371ee",
+      paddingVertical: 20,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    headerText: {
+      color: "#fff",
+      fontSize: 24,
+      fontFamily: "LeagueSpartan_500Medium",
+      textAlign: "center",
+    },
     scrollContainer: { padding: 20, paddingBottom: 150 },
-    emptyText: { fontSize: 16 },
+    emptyText: {
+      fontSize: 16,
+      fontFamily: "LeagueSpartan_400Regular",
+      textAlign: "center",
+      marginTop: 50,
+    },
     productCard: {
       flexDirection: "row",
       justifyContent: "space-between",
@@ -93,8 +111,17 @@ export default function Cart() {
     productInfo: { flexDirection: "row", alignItems: "center", flex: 1 },
     productImage: { width: 50, height: 50, marginRight: 10, borderRadius: 5 },
     productDetails: { flex: 1 },
-    productName: { fontSize: 16, fontWeight: "bold" },
-    productPrice: { fontSize: 14, color: "#555", marginBottom: 0 },
+    productName: {
+      fontSize: 16,
+      fontFamily: "LeagueSpartan_500Medium",
+      marginBottom: 2,
+    },
+    productPrice: {
+      fontSize: 14,
+      fontFamily: "LeagueSpartan_400Regular",
+      color: "#555",
+      marginBottom: 5,
+    },
     quantityControl: {
       flexDirection: "row",
       alignItems: "center",
@@ -109,22 +136,22 @@ export default function Cart() {
       alignItems: "center",
       justifyContent: "center",
     },
-    quantityButtonText: { color: "#fff", fontWeight: "bold" },
-    quantityText: { fontSize: 16, fontWeight: "bold" },
-    deleteButton: { marginBottom: 10 },
-    subtotalText: { fontSize: 18, fontWeight: "bold" },
-    topHeader: {
-      backgroundColor: "#0371eeff",
-      paddingVertical: 20,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    headerText: {
+    quantityButtonText: {
       color: "#fff",
-      fontSize: 24,
       fontFamily: "LeagueSpartan_500Medium",
-      textAlign: "center",
+      fontSize: 16,
     },
+    quantityText: {
+      fontSize: 16,
+      fontFamily: "LeagueSpartan_500Medium",
+    },
+    deleteButton: { marginBottom: 10 },
+    deleteButtonText: {
+      color: "red",
+      fontFamily: "LeagueSpartan_500Medium",
+      marginTop: 5,
+    },
+    subtotalText: { fontSize: 18, fontFamily: "LeagueSpartan_500Medium" },
     bottomBar: {
       position: "absolute",
       bottom: 0,
@@ -138,7 +165,7 @@ export default function Cart() {
       alignItems: "center",
       justifyContent: "space-between",
     },
-    totalText: { fontSize: 16, fontWeight: "bold" },
+    totalText: { fontSize: 16, fontFamily: "LeagueSpartan_500Medium" },
   });
 
   return (
@@ -190,7 +217,7 @@ export default function Cart() {
                     style={styles.deleteButton}
                     onPress={() => eliminateProduct(product.id)}
                   >
-                    <Text style={{ color: "red", marginTop: 5 }}>Eliminar</Text>
+                    <Text style={styles.deleteButtonText}>Eliminar</Text>
                   </Pressable>
                 </View>
               </View>
@@ -198,7 +225,6 @@ export default function Cart() {
           )}
         </ScrollView>
 
-        {/* Barra inferior */}
         <View style={styles.bottomBar}>
           <Text style={styles.totalText}>Total: ${calculateTotal()}</Text>
           <Button type="primary" onPress={handlePay} style={{ minWidth: 100 }}>
@@ -209,10 +235,3 @@ export default function Cart() {
     </SafeAreaProvider>
   );
 }
-/* 
-
-(\_/)    /\_/\ 
-( ^_^)  ( ^.^ )
-/ >🥕    
-
-*/
