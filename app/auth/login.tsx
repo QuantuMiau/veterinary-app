@@ -13,7 +13,7 @@ import {
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useNavigation, useRouter } from "expo-router";
 
-import { useState } from "react";
+import { use, useState } from "react";
 import {
   Alert,
   Pressable,

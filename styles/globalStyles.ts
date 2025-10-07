@@ -59,7 +59,7 @@ export const useGlobalStyles = () => {
     headerText: {
       color: "#fff",
       fontSize: 24,
-      fontFamily: "LeagueSpartan_500Medium",
+      fontFamily: "LeagueSpartan_400Medium",
       textAlign: "center",
     },
   });

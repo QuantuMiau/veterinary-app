@@ -26,11 +26,12 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="payment"
+        name="profile"
         options={{
-          tabBarStyle: {
-            display: "none",
-          },
+          title: "Perfil",
+          tabBarIcon: ({ color }) => (
+            <Feather name="user" size={24} color="black" />
+          ),
         }}
       />
     </Tabs>
