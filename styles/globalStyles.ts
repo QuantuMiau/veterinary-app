@@ -27,7 +27,6 @@ export const globalStyles = () => {
     },
     label: {
       fontSize: 20,
-      fontFamily: "LeagueSpartan_500Medium",
       color: colors.text,
     },
     form: {
@@ -56,6 +55,12 @@ export const globalStyles = () => {
     },
     buttons: {
       gap: 12,
+    },
+    headerText: {
+      color: "#fff",
+      fontSize: 24,
+      fontFamily: "LeagueSpartan_500Medium",
+      textAlign: "center",
     },
   });
 };
