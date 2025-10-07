@@ -209,3 +209,10 @@ export default function Cart() {
     </SafeAreaProvider>
   );
 }
+/* 
+
+(\_/)    /\_/\ 
+( ^_^)  ( ^.^ )
+/ >🥕    
+
+*/
