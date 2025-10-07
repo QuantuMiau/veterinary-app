@@ -15,6 +15,7 @@ import {
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import Feather from "@expo/vector-icons/Feather";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import { useRouter } from "expo-router";
 interface User {
   id: string;
   name: string;
@@ -28,6 +29,7 @@ export default function Profile() {
   const colorScheme = useColorScheme();
   const colors = colorScheme === "dark" ? Colors.dark : Colors.light;
   const globalS = useGlobalStyles;
+  const router = useRouter();
 
   const [dataUser, setDataUser] = useState<User>({
     id: "1",
@@ -103,7 +105,7 @@ export default function Profile() {
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView>
           <View style={styles.header}>
-            <Header text="Mi perfil" />
+            <Header text="Mi perfil" onBackPress={router.back} />
           </View>
 
           <View style={styles.infoContainer}>
@@ -176,3 +178,10 @@ export default function Profile() {
     </SafeAreaProvider>
   );
 }
+/* 
+
+(\_/)    /\_/\ 
+( ^_^)  ( ^.^ )
+/ >🥕    
+
+*/
