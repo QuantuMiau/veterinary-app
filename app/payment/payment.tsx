@@ -185,3 +185,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+//(\___/)  <(Hi!)
+//(O w O)/
+//(")_(")

@@ -21,3 +21,6 @@ export default function RootLayout() {
     </ThemeProvider>
   );
 }
+//(\___/)  <(Hi!)
+//(O w O)/
+//(")_(")

@@ -268,3 +268,6 @@ const modalStyles = StyleSheet.create({
     color: "#0371ee",
   },
 });
+//(\___/)  <(Hi!)
+//(O w O)/
+//(")_(")
