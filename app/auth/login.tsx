@@ -92,7 +92,7 @@ export default function login() {
     setLoadingButton(true);
 
     setTimeout(() => {
-      Alert.alert("", "Sesion iniciada", [
+      Alert.alert("", "Sesión iniciada", [
         {
           text: "OK",
           onPress: () => {
@@ -157,7 +157,7 @@ export default function login() {
                   router.push("/auth/restore_pass");
                 }}
               >
-                <Text style={styles.forgotPass}>Olvide mi contraseña</Text>
+                <Text style={styles.forgotPass}>Olvidé mi contraseña</Text>
               </Pressable>
             </View>
           </View>
@@ -170,7 +170,7 @@ export default function login() {
               }}
               loading={loadingButton}
             >
-              Iniciar Sesion
+              Iniciar Sesión
             </Button>
             <Button
               type="secondary"

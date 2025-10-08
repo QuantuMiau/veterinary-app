@@ -33,23 +33,23 @@ export default function Cart() {
   const [products, setProducts] = useState<Product[]>([
     {
       id: 1,
-      name: "Producto 1",
+      name: "Shampoo para perros Grisi - 280ml",
       price: 85.5,
-      image: require("@/assets/images/Logo.png"),
+      image: require("@/assets/images/products/shampoo-perro.png"),
       quantity: 1,
     },
     {
       id: 2,
-      name: "Producto 2",
+      name: "Electrodex 450ml - Solución de electrolitos",
       price: 30,
-      image: require("@/assets/images/Logo.png"),
+      image: require("@/assets/images/products/electrolito-perro.png"),
       quantity: 1,
     },
     {
       id: 3,
-      name: "Producto 3",
+      name: "Pañal para perros talla mediana",
       price: 25.7,
-      image: require("@/assets/images/Logo.png"),
+      image: require("@/assets/images/products/dog-pads.png"),
       quantity: 1,
     },
   ]);

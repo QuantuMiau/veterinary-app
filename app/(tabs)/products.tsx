@@ -32,39 +32,39 @@ export default function ProductsScreen() {
   const [products] = useState<Product[]>([
     {
       id: 1,
-      name: "Producto 1",
+      name: "Alimento húmedo Royal Canin para gatos",
       price: 85.5,
-      image: require("@/assets/images/Logo.png"),
+      image: require("@/assets/images/products/lata-gato.png"),
     },
     {
       id: 2,
-      name: "Producto 2",
+      name: "Electrodex 450ml - Solución de electrolitos",
       price: 30,
-      image: require("@/assets/images/Logo.png"),
+      image: require("@/assets/images/products/electrolito-perro.png"),
     },
     {
       id: 3,
-      name: "Producto 3",
+      name: "Pañal para perros talla mediana",
       price: 25.7,
-      image: require("@/assets/images/Logo.png"),
+      image: require("@/assets/images/products/dog-pads.png"),
     },
     {
       id: 4,
-      name: "Producto 4",
+      name: "Inaba Churu - Snack para gatos",
       price: 40,
-      image: require("@/assets/images/Logo.png"),
+      image: require("@/assets/images/products/inaba-churu.png"),
     },
     {
       id: 5,
-      name: "Producto 5",
+      name: "Collar para perros Modelo Top Rope",
       price: 60,
-      image: require("@/assets/images/Logo.png"),
+      image: require("@/assets/images/products/collar-perro.png"),
     },
     {
       id: 6,
-      name: "Producto 6",
+      name: "Raton juguete para gatos",
       price: 15.5,
-      image: require("@/assets/images/Logo.png"),
+      image: require("@/assets/images/products/raton-juguete-para-gato.png"),
     },
   ]);
 

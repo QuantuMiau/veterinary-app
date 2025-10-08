@@ -39,7 +39,7 @@ export default function Orders() {
       date: "2025-10-07",
       status: "Pendiente de pago",
       total: 141.2,
-      image: require("@/assets/images/Logo.png"),
+      image: require("@/assets/images/products/desparasitande.png"),
     },
     {
       id: 2,
@@ -47,7 +47,7 @@ export default function Orders() {
       date: "2025-10-06",
       status: "Pagado",
       total: 85.5,
-      image: require("@/assets/images/Logo.png"),
+      image: require("@/assets/images/products/lata-gato.png"),
     },
   ]);
 

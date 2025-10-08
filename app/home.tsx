@@ -119,9 +119,10 @@ export default function Home() {
       // ** Contenedor de la imagen
       - Usamos <View> para agrupar la imagen y poder aplicar estilos
     */}
-            <View>
-              <Image source={require("@/assets/images/Logo.png")} />
-            </View>
+            <Image
+              style={{ width: 130, height: 130 }}
+              source={require("@/assets/images/logo-vet.png")}
+            />
 
             {/*
       // ** Contenedor de textos
