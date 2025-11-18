@@ -97,15 +97,20 @@ export default function ProductsScreen() {
     return true;
   });
 
-  // Agregar producto al carrito
+  const [addedIds, setAddedIds] = useState<number[]>([]);
+
   const handleAddToCart = (product: CartProduct) => {
     const existing = cartProducts.find((p) => p.id === product.id);
     if (existing) {
-      // si ya existe, aumentamos la cantidad
       addToCart({ ...product, quantity: (existing.quantity || 1) + 1 });
     } else {
       addToCart(product);
     }
+
+    setAddedIds((prev) => [...prev, product.id]);
+    setTimeout(() => {
+      setAddedIds((prev) => prev.filter((id) => id !== product.id));
+    }, 1500);
   };
 
   const styles = StyleSheet.create({
@@ -240,16 +245,10 @@ export default function ProductsScreen() {
                   >
                     <MaterialCommunityIcons
                       name={
-                        cartProducts.find((p) => p.id === item.id)
-                          ? "cart-check"
-                          : "cart-plus"
+                        addedIds.includes(item.id) ? "cart-check" : "cart-plus"
                       }
                       size={20}
-                      color={
-                        cartProducts.find((p) => p.id === item.id)
-                          ? "green"
-                          : "black"
-                      }
+                      color={addedIds.includes(item.id) ? "green" : "black"}
                     />
                   </Pressable>
                 </View>
