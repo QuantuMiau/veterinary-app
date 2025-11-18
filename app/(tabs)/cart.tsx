@@ -15,6 +15,10 @@ import {
 } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useCart, Product } from "@/hooks/use-cart";
+import { useCallback, useState } from "react";
+import { useAuthStore } from "@/store/authStore";
+import { useFocusEffect } from "@react-navigation/native";
+import { fetchCartAPI, updateCartAPI } from "@/services/cartService";
 
 export default function Cart() {
   const colorScheme = useColorScheme();
@@ -23,16 +27,92 @@ export default function Cart() {
   const router = useRouter();
 
   const { cartProducts, removeFromCart, addToCart, calculateTotal } = useCart();
+  const { replaceCart } = useCart();
+  const { token } = useAuthStore();
+  const [syncing, setSyncing] = useState(false);
 
-  const updateQuantity = (id: number, delta: number) => {
+  // Sync cart from server when this screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      let mounted = true;
+      (async () => {
+        setSyncing(true);
+        try {
+          const data: any = await fetchCartAPI(token ?? undefined);
+          if (!mounted) return;
+
+          const mapped: Product[] = (Array.isArray(data) ? data : []).map(
+            (it: any, idx: number) => ({
+              id: Number(it.product_id) || idx + 1,
+              productId: it.product_id,
+              name: it.name || it.product_name || "Producto",
+              description: it.description || "",
+              price: parseFloat(it.price) || 0,
+              image:
+                it.image_url && it.image_url.startsWith("http")
+                  ? { uri: it.image_url }
+                  : require("@/assets/images/products/lata-gato.png"),
+              category: it.category_name || "",
+              quantity: Number(it.quantity) || 1,
+            })
+          );
+
+          replaceCart(mapped);
+        } catch (err: any) {
+          console.error("Error sincronizando carrito:", err);
+        } finally {
+          if (mounted) setSyncing(false);
+        }
+      })();
+
+      return () => {
+        mounted = false;
+      };
+    }, [token])
+  );
+
+  const updateQuantity = async (id: number, delta: number) => {
     const product = cartProducts.find((p) => p.id === id);
     if (!product) return;
 
-    const newQuantity = (product.quantity || 1) + delta;
-    if (newQuantity <= 0) {
-      removeFromCart(id);
-    } else {
-      addToCart({ ...product }, delta);
+    const backendId = (product as any).productId ?? String(product.id);
+    const currentQty = product.quantity || 1;
+    const newQty = currentQty + delta;
+
+    try {
+      setSyncing(true);
+
+      // Si newQty <= 0, lo tratamos como eliminación (PUT quantity = 0)
+      await updateCartAPI(
+        String(backendId),
+        newQty <= 0 ? 0 : newQty,
+        token ?? undefined
+      );
+
+      // Después de un PUT exitoso, re-sincronizamos desde el servidor
+      const data: any = await fetchCartAPI(token ?? undefined);
+      const mapped: Product[] = (Array.isArray(data) ? data : []).map(
+        (it: any, idx: number) => ({
+          id: Number(it.product_id) || idx + 1,
+          productId: it.product_id,
+          name: it.name || it.product_name || "Producto",
+          description: it.description || "",
+          price: parseFloat(it.price) || 0,
+          image:
+            it.image_url && it.image_url.startsWith("http")
+              ? { uri: it.image_url }
+              : require("@/assets/images/products/lata-gato.png"),
+          category: it.category_name || "",
+          quantity: Number(it.quantity) || 1,
+        })
+      );
+
+      replaceCart(mapped);
+    } catch (err: any) {
+      console.error("Error updating quantity:", err);
+      Alert.alert("Error", err?.message || "No se pudo actualizar la cantidad");
+    } finally {
+      setSyncing(false);
     }
   };
 
@@ -178,7 +258,49 @@ export default function Cart() {
                   </Text>
                   <Pressable
                     style={styles.deleteButton}
-                    onPress={() => removeFromCart(product.id)}
+                    onPress={async () => {
+                      try {
+                        setSyncing(true);
+                        const backendId =
+                          (product as any).productId ?? String(product.id);
+                        // llamar api
+                        await updateCartAPI(
+                          String(backendId),
+                          0,
+                          token ?? undefined
+                        );
+
+                        // ok ? lo borra xd
+                        const data: any = await fetchCartAPI(
+                          token ?? undefined
+                        );
+                        const mapped: Product[] = (
+                          Array.isArray(data) ? data : []
+                        ).map((it: any, idx: number) => ({
+                          id: Number(it.product_id) || idx + 1,
+                          productId: it.product_id,
+                          name: it.name || it.product_name || "Producto",
+                          description: it.description || "",
+                          price: parseFloat(it.price) || 0,
+                          image:
+                            it.image_url && it.image_url.startsWith("http")
+                              ? { uri: it.image_url }
+                              : require("@/assets/images/products/lata-gato.png"),
+                          category: it.category_name || "",
+                          quantity: Number(it.quantity) || 1,
+                        }));
+
+                        replaceCart(mapped);
+                      } catch (err: any) {
+                        console.error("Error removing item from cart:", err);
+                        Alert.alert(
+                          "Error",
+                          err?.message || "No se pudo eliminar el producto"
+                        );
+                      } finally {
+                        setSyncing(false);
+                      }
+                    }}
                   >
                     <Text style={styles.deleteButtonText}>Eliminar</Text>
                   </Pressable>

@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/ui/header";
 import { Colors } from "@/constants/theme";
+import { useAuthStore } from "@/store/authStore";
 import { useGlobalStyles } from "@/styles/globalStyles";
 import { loginValidator } from "@/utils/validators";
 import {
@@ -82,29 +83,38 @@ export default function login() {
     },
   });
 
-  function login(email: string, password: string) {
-    const erroVal = loginValidator(email, password);
-    if (erroVal != "") {
-      setErrorMsg(erroVal);
+  function loginHandler() {
+    const { login } = useAuthStore.getState();
+
+    const errorVal = loginValidator(email, password);
+    if (errorVal !== "") {
+      setErrorMsg(errorVal);
       return;
     }
+
     setErrorMsg("");
     setLoadingButton(true);
 
-    setTimeout(() => {
-      Alert.alert("", "Sesión iniciada", [
+    login(email, password).then((result) => {
+      setLoadingButton(false);
+
+      if (!result.ok) {
+        setErrorMsg(result.message || "Error al iniciar sesión");
+        return;
+      }
+
+      Alert.alert("Bienvenido", "Inicio de sesión exitoso", [
         {
           text: "OK",
-          onPress: () => {
-            setLoadingButton(false);
-            router.replace("/(tabs)/products");
-          },
+          onPress: () => router.replace("/(tabs)/products"),
         },
       ]);
-    }, 1000);
-    setEmail("");
-    setPassword("");
+
+      setEmail("");
+      setPassword("");
+    });
   }
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
@@ -165,9 +175,7 @@ export default function login() {
           <View style={globalS.buttons}>
             <Button
               type="primary"
-              onPress={() => {
-                login(email, password);
-              }}
+              onPress={loginHandler}
               loading={loadingButton}
             >
               Iniciar Sesión

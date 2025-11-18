@@ -16,6 +16,7 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import Feather from "@expo/vector-icons/Feather";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useRouter } from "expo-router";
+import { useAuthStore } from "@/store/authStore";
 interface User {
   id: string;
   name: string;
@@ -104,6 +105,37 @@ export default function Profile() {
     router.push("/userTabs/orders");
   };
 
+  const { logout } = useAuthStore();
+
+  const handleLogout = () => {
+    // Confirm before logging out
+    Alert.alert(
+      "Cerrar sesión",
+      "¿Estás seguro que quieres cerrar sesión?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Cerrar sesión",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await logout();
+              // Después de logout, navegar al login
+              router.replace("/auth/login");
+            } catch (err) {
+              console.error("Error during logout:", err);
+              Alert.alert(
+                "Error",
+                "No se pudo cerrar sesión. Intenta de nuevo."
+              );
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
@@ -159,20 +191,23 @@ export default function Profile() {
                 <Text style={styles.optionText}>Editar información</Text>
                 <FontAwesome6 name="angle-right" size={24} color="black" />
               </Pressable>
+              {/* cerrar sesision idk */}
               <Pressable
                 style={({ pressed }) => [
                   styles.option,
                   pressed && { backgroundColor: "#e9e9e991" },
                 ]}
-                onPress={() => handlePress("Eliminar cuenta")}
+                onPress={handleLogout}
               >
                 <Feather
-                  name="delete"
+                  name="log-out"
                   size={24}
                   color="black"
                   style={{ marginRight: 15 }}
                 />
-                <Text style={styles.optionText}>Eliminar cuenta</Text>
+                <Text style={[styles.optionText, { color: "black" }]}>
+                  Cerrar sesión
+                </Text>
                 <FontAwesome6 name="angle-right" size={24} color="black" />
               </Pressable>
             </View>
