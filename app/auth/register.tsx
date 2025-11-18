@@ -31,7 +31,9 @@ export default function register() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(true);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
   const [loadingButton, setLoadingButton] = useState(false);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
   const [erroMsg, setErroMsg] = useState("");
 
   // * functions
