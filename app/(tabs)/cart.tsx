@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Colors } from "@/constants/theme";
 import { useGlobalStyles } from "@/styles/globalStyles";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useColorScheme } from "react-native";
 import {
   Alert,
   Image,
@@ -10,19 +10,11 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
   SafeAreaView,
 } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  image: any;
-  quantity: number;
-}
+import { useCart, Product } from "@/hooks/use-cart";
 
 export default function Cart() {
   const colorScheme = useColorScheme();
@@ -30,50 +22,19 @@ export default function Cart() {
   const globalS = useGlobalStyles();
   const router = useRouter();
 
-  const [products, setProducts] = useState<Product[]>([
-    {
-      id: 1,
-      name: "Shampoo para perros Grisi - 280ml",
-      price: 85.5,
-      image: require("@/assets/images/products/shampoo-perro.png"),
-      quantity: 1,
-    },
-    {
-      id: 2,
-      name: "Electrodex 450ml - Solución de electrolitos",
-      price: 30,
-      image: require("@/assets/images/products/electrolito-perro.png"),
-      quantity: 1,
-    },
-    {
-      id: 3,
-      name: "Pañal para perros talla mediana",
-      price: 25.7,
-      image: require("@/assets/images/products/dog-pads.png"),
-      quantity: 1,
-    },
-  ]);
-
-  const eliminateProduct = (id: number) => {
-    setProducts(products.filter((p) => p.id !== id));
-  };
+  const { cartProducts, removeFromCart, addToCart, calculateTotal } = useCart();
 
   const updateQuantity = (id: number, delta: number) => {
-    setProducts((prev) =>
-      prev
-        .map((p) => {
-          if (p.id === id) {
-            const newQty = p.quantity + delta;
-            return { ...p, quantity: newQty };
-          }
-          return p;
-        })
-        .filter((p) => p.quantity > 0)
-    );
-  };
+    const product = cartProducts.find((p) => p.id === id);
+    if (!product) return;
 
-  const calculateTotal = () =>
-    products.reduce((total, p) => total + p.price * p.quantity, 0).toFixed(2);
+    const newQuantity = (product.quantity || 1) + delta;
+    if (newQuantity <= 0) {
+      removeFromCart(id);
+    } else {
+      addToCart({ ...product }, delta);
+    }
+  };
 
   const handlePay = () => {
     router.push("/payment/payment");
@@ -178,10 +139,10 @@ export default function Cart() {
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          {products.length === 0 ? (
+          {cartProducts.length === 0 ? (
             <Text style={styles.emptyText}>Tu carrito está vacío</Text>
           ) : (
-            products.map((product) => (
+            cartProducts.map((product: Product) => (
               <View key={product.id} style={styles.productCard}>
                 <View style={styles.productInfo}>
                   <Image source={product.image} style={styles.productImage} />
@@ -199,7 +160,7 @@ export default function Cart() {
                         <Text style={styles.quantityButtonText}>-</Text>
                       </Pressable>
                       <Text style={styles.quantityText}>
-                        {product.quantity}
+                        {product.quantity || 1}
                       </Text>
                       <Pressable
                         style={styles.quantityButton}
@@ -213,11 +174,11 @@ export default function Cart() {
 
                 <View>
                   <Text style={styles.subtotalText}>
-                    ${(product.price * product.quantity).toFixed(2)}
+                    ${(product.price * (product.quantity || 1)).toFixed(2)}
                   </Text>
                   <Pressable
                     style={styles.deleteButton}
-                    onPress={() => eliminateProduct(product.id)}
+                    onPress={() => removeFromCart(product.id)}
                   >
                     <Text style={styles.deleteButtonText}>Eliminar</Text>
                   </Pressable>
@@ -237,10 +198,3 @@ export default function Cart() {
     </SafeAreaProvider>
   );
 }
-/* 
-
-(\_/)    /\_/\ 
-( ^_^)  ( ^.^ )
-/ >🥕    
-
-*/

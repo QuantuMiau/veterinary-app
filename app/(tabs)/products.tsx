@@ -13,13 +13,7 @@ import {
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Colors } from "@/constants/theme";
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  image: any;
-}
+import { useCart, Product as CartProduct } from "@/hooks/use-cart";
 
 const { width } = Dimensions.get("window");
 const ITEM_WIDTH = (width - 60) / 2;
@@ -29,47 +23,69 @@ export default function ProductsScreen() {
   const colors = colorScheme === "dark" ? Colors.dark : Colors.light;
 
   const [search, setSearch] = useState("");
-  const [products] = useState<Product[]>([
+  const [products] = useState<CartProduct[]>([
     {
       id: 1,
       name: "Alimento húmedo Royal Canin para gatos",
       price: 85.5,
       image: require("@/assets/images/products/lata-gato.png"),
+      quantity: 1,
+      description:
+        "Alimento balanceado enlatado para gatos adultos de todas las razas.",
+      category: "Alimentos",
     },
     {
       id: 2,
       name: "Electrodex 450ml - Solución de electrolitos",
       price: 30,
       image: require("@/assets/images/products/electrolito-perro.png"),
+      quantity: 1,
+      description:
+        "Solución oral para rehidratar y reponer electrolitos en perros y gatos.",
+      category: "Salud",
     },
     {
       id: 3,
       name: "Pañal para perros talla mediana",
       price: 25.7,
       image: require("@/assets/images/products/dog-pads.png"),
+      quantity: 1,
+      description:
+        "Pañales absorbentes diseñados para perros de tamaño mediano.",
+      category: "Accesorios",
     },
     {
       id: 4,
       name: "Inaba Churu - Snack para gatos",
       price: 40,
       image: require("@/assets/images/products/inaba-churu.png"),
+      quantity: 1,
+      description: "Delicioso snack cremoso para gatos en tubo individual.",
+      category: "Snacks",
     },
     {
       id: 5,
       name: "Collar para perros Modelo Top Rope",
       price: 60,
       image: require("@/assets/images/products/collar-perro.png"),
+      quantity: 1,
+      description:
+        "Collar ajustable y resistente para perros de todas las tallas.",
+      category: "Accesorios",
     },
     {
       id: 6,
       name: "Raton juguete para gatos",
       price: 15.5,
       image: require("@/assets/images/products/raton-juguete-para-gato.png"),
+      quantity: 1,
+      description: "Juguete interactivo en forma de ratón para gatos.",
+      category: "Juguetes",
     },
   ]);
 
-  const [addedIds, setAddedIds] = useState<number[]>([]);
   const [filter, setFilter] = useState<"all" | "cheap" | "expensive">("all");
+  const { cartProducts, addToCart } = useCart(); // ✅ usamos el hook
 
   const filteredProducts = products.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
@@ -81,9 +97,20 @@ export default function ProductsScreen() {
     return true;
   });
 
-  const toggleAdd = (id: number) => {
-    setAddedIds((prev) => [...prev, id]);
-    setTimeout(() => setAddedIds((prev) => prev.filter((i) => i !== id)), 1500);
+  const [addedIds, setAddedIds] = useState<number[]>([]);
+
+  const handleAddToCart = (product: CartProduct) => {
+    const existing = cartProducts.find((p) => p.id === product.id);
+    if (existing) {
+      addToCart({ ...product, quantity: (existing.quantity || 1) + 1 });
+    } else {
+      addToCart(product);
+    }
+
+    setAddedIds((prev) => [...prev, product.id]);
+    setTimeout(() => {
+      setAddedIds((prev) => prev.filter((id) => id !== product.id));
+    }, 1500);
   };
 
   const styles = StyleSheet.create({
@@ -209,13 +236,12 @@ export default function ProductsScreen() {
                   styles.productCard,
                   pressed && styles.productCardPressed,
                 ]}
-                onPress={() => console.log("Card pressed", item.name)}
               >
                 <View style={{ position: "relative" }}>
                   <Image source={item.image} style={styles.productImage} />
                   <Pressable
                     style={styles.cartButton}
-                    onPress={() => toggleAdd(item.id)}
+                    onPress={() => handleAddToCart(item)}
                   >
                     <MaterialCommunityIcons
                       name={
@@ -241,11 +267,3 @@ export default function ProductsScreen() {
     </SafeAreaProvider>
   );
 }
-
-/* 
-
-(\_/)    /\_/\ 
-( ^_^)  ( ^.^ )
-/ >🥕    
-
-*/
