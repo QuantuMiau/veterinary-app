@@ -8,6 +8,7 @@ export interface Product {
   price: number;
   image: any;
   category?: string;
+  productId?: string;
   quantity?: number;
 }
 
@@ -17,6 +18,7 @@ interface CartContextType {
   removeFromCart: (id: number) => void;
   clearCart: () => void;
   calculateTotal: () => string;
+  replaceCart: (items: Product[]) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -28,7 +30,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setCartProducts((prev) => {
       const existing = prev.find((p) => p.id === product.id);
       if (existing) {
-        // Si ya existe, aumentamos la cantidad
+        // *cosa para ver si eiste aumentar
         return prev.map((p) =>
           p.id === product.id
             ? { ...p, quantity: (p.quantity || 1) + quantity }
@@ -46,6 +48,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const clearCart = () => setCartProducts([]);
 
+  const replaceCart = (items: Product[]) => {
+    setCartProducts(items);
+  };
+
   const calculateTotal = () => {
     return cartProducts
       .reduce(
@@ -62,6 +68,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         addToCart,
         removeFromCart,
         clearCart,
+        replaceCart,
         calculateTotal,
       }}
     >
