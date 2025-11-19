@@ -261,7 +261,7 @@ export default function Cart() {
                       setSyncing(true);
                       const backendId =
                         (product as any).productId ?? String(product.id);
-                      // llamar api
+                      // llamar api yo kese
                       await updateCartAPI(
                         String(backendId),
                         0,

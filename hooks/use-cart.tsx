@@ -30,7 +30,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setCartProducts((prev) => {
       const existing = prev.find((p) => p.id === product.id);
       if (existing) {
-        // Si ya existe, aumentamos la cantidad
+        // *cosa para ver si eiste aumentar
         return prev.map((p) =>
           p.id === product.id
             ? { ...p, quantity: (p.quantity || 1) + quantity }

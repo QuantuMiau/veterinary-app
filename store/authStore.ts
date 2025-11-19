@@ -26,17 +26,17 @@ export const useAuthStore = create<AuthState>((set) => ({
   token: null,
   isAuthenticated: false,
 
-  /** LOGIN **/
+  // * LOGIN 
   login: async (email, password) => {
     try {
       const data = await loginRequest(email, password);
-      // data = { ok, user, token }
+
 
       // Guardar token
       await SecureStore.setItemAsync("token", data.token);
       await SecureStore.setItemAsync("user", JSON.stringify(data.user));
 
-      // Actualizar global
+     // actualizar estado
       set({
         user: data.user,
         token: data.token,
@@ -49,7 +49,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  /** LOGOUT **/
+  // * logout
   logout: async () => {
     await SecureStore.deleteItemAsync("token");
     await SecureStore.deleteItemAsync("user");
@@ -60,7 +60,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     });
   },
 
-  /** Cargar sesión **/
+  // * Cargar sesión 
   loadSession: async () => {
     console.log("🔵 Ejecutando loadSession...");
 
