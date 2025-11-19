@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/ui/header";
 import { Colors } from "@/constants/theme";
+import { registerRequest } from "@/services/authService";
 import { useGlobalStyles } from "@/styles/globalStyles";
 import { formatPhone, registerValidator } from "@/utils/validators";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
@@ -16,6 +17,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function register() {
   const colorScheme = useColorScheme();
@@ -53,18 +55,23 @@ export default function register() {
     setLoadingButton(true);
     setErroMsg("");
 
-    setTimeout(() => {
-      Alert.alert("", "Cuenta creada correctamente", [
-        {
-          text: "OK",
-          onPress: () => {
-            router.replace("/auth/login");
-            setLoadingButton(false);
-            clearInfo();
+    registerRequest(name, lastName, motherLastName, email, phone, password)
+      .then((res) => {
+        setLoadingButton(false);
+        Alert.alert("Registro exitoso", "Ahora puedes iniciar sesión", [
+          {
+            text: "OK",
+            onPress: () => {
+              clearInfo();
+              router.replace("/auth/login");
+            },
           },
-        },
-      ]);
-    }, 1000);
+        ]);
+      })
+      .catch((err) => {
+        setLoadingButton(false);
+        setErroMsg(err.message);
+      });
   }
 
   function clearInfo() {
@@ -78,8 +85,13 @@ export default function register() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView>
-        <ScrollView style={globalS.container}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <KeyboardAwareScrollView
+          contentContainerStyle={globalS.container}
+          enableOnAndroid={true}
+          extraScrollHeight={90}
+          keyboardShouldPersistTaps="handled"
+        >
           <Header text="Nueva cuenta" onBackPress={router.back}></Header>
           <View style={globalS.form}>
             <View style={globalS.errorMsg}>
@@ -109,7 +121,7 @@ export default function register() {
               <TextInput
                 value={motherLastName}
                 onChangeText={setMotherLastName}
-                placeholder="Mauricio"
+                placeholder="Andrade"
                 style={globalS.input}
               />
             </View>
@@ -118,7 +130,7 @@ export default function register() {
               <TextInput
                 value={email}
                 onChangeText={setEmail}
-                placeholder="Mauricio"
+                placeholder="example@gmail.com"
                 style={globalS.input}
               />
             </View>
@@ -127,7 +139,7 @@ export default function register() {
               <TextInput
                 value={phone}
                 onChangeText={(text) => setPhone(formatPhone(text))}
-                placeholder="Mauricio"
+                placeholder="2712345678"
                 style={globalS.input}
                 keyboardType="numeric"
               />
@@ -165,7 +177,7 @@ export default function register() {
               Registrarse
             </Button>
           </View>
-        </ScrollView>
+        </KeyboardAwareScrollView>
       </SafeAreaView>
     </SafeAreaProvider>
   );

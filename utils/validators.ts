@@ -81,7 +81,7 @@ export const registerValidator = (
   if (!nameValidator(name)) {
     return "Nombre debe tener mínimo 2 caracteres";
   }
-  if (checkEmail(email)) {
+  if (!checkEmail(email)) {
     return `Correo invalido`;
   }
   if (!phoneValidator(phone)) {
