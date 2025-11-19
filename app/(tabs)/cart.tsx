@@ -161,7 +161,7 @@ export default function Cart() {
 
   const openPaymentSheet = async () => {
     const { error } = await presentPaymentSheet();
-    if (error) alert(`Pago fallido: ${error.message}`);
+    if (error) alert(`Pago cancelado`);
     else {
       try {
         await createOrder(token ?? undefined);
