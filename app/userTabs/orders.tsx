@@ -10,10 +10,14 @@ import {
   Image,
   Modal,
   Linking,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { useAuthStore } from "@/store/authStore";
+import { useFocusEffect } from "@react-navigation/native";
+import { fetchUserOrders } from "@/services/orderService";
 
 interface Order {
   id: number;
@@ -32,29 +36,61 @@ export default function Orders() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [orders, setOrders] = useState<Order[]>([
-    {
-      id: 1,
-      orderNumber: "PED-001",
-      date: "2025-10-07",
-      status: "Pendiente de pago",
-      total: 141.2,
-      image: require("@/assets/images/products/desparasitande.png"),
-    },
-    {
-      id: 2,
-      orderNumber: "PED-002",
-      date: "2025-10-06",
-      status: "Pagado",
-      total: 85.5,
-      image: require("@/assets/images/products/lata-gato.png"),
-    },
-  ]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const { token } = useAuthStore();
+  const [loading, setLoading] = useState(false);
 
   const handleViewDetails = (order: Order) => {
     setSelectedOrder(order);
     setModalVisible(true);
   };
+
+  // Sync orders from server when this screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      let mounted = true;
+
+      (async () => {
+        setLoading(true);
+        try {
+          const data: any = await fetchUserOrders(token ?? undefined);
+
+          // API may return { ok: true, orders: [...] } or an array directly
+          const raw = Array.isArray(data?.orders) ? data.orders : data;
+
+          const mapped: Order[] = (Array.isArray(raw) ? raw : []).map(
+            (it: any, idx: number) => ({
+              id: idx + 1,
+              orderNumber: it.order_id || it.orderNumber || `PED-${idx + 1}`,
+              date: it.order_date || it.date || "",
+              status: it.status || it.order_status || "Pendiente de pago",
+              total: parseFloat(it.total) || 0,
+              image:
+                (it.image_url &&
+                  it.image_url.startsWith("http") && { uri: it.image_url }) ||
+                (it.image &&
+                  it.image.startsWith("http") && { uri: it.image }) ||
+                require("@/assets/images/products/lata-gato.png"),
+            })
+          );
+
+          if (!mounted) return;
+          setOrders(mapped);
+        } catch (err: any) {
+          // Si hay cualquier error tratamos la UI como "sin órdenes" en silencio.
+          // No mostramos Alert ni console.error para evitar mensajes confusos
+          // en caso de que el backend responda que no hay pedidos.
+          if (mounted) setOrders([]);
+        } finally {
+          if (mounted) setLoading(false);
+        }
+      })();
+
+      return () => {
+        mounted = false;
+      };
+    }, [token])
+  );
 
   const openMapLocation = () => {
     const url = "https://maps.app.goo.gl/WWCwJdPs1RiXtuQe6";
@@ -70,8 +106,12 @@ export default function Orders() {
           <Text style={styles.headerText}>Mis pedidos</Text>
         </View>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          {orders.length === 0 ? (
-            <Text style={styles.emptyText}>No tienes pedidos registrados</Text>
+          {loading ? (
+            <View style={styles.loadingWrapper}>
+              <ActivityIndicator size="large" color="#0371ee" />
+            </View>
+          ) : orders.length === 0 ? (
+            <Text style={styles.emptyText}>No hay órdenes</Text>
           ) : (
             orders.map((order) => (
               <View key={order.id} style={styles.productCard}>
@@ -174,6 +214,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 40,
     color: "#555",
+  },
+  loadingWrapper: {
+    marginTop: 40,
+    alignItems: "center",
   },
   productCard: {
     flexDirection: "column",

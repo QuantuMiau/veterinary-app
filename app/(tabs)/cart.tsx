@@ -82,14 +82,13 @@ export default function Cart() {
     try {
       setSyncing(true);
 
-      // Si newQty <= 0, lo tratamos como eliminación (PUT quantity = 0)
       await updateCartAPI(
         String(backendId),
         newQty <= 0 ? 0 : newQty,
         token ?? undefined
       );
 
-      // Después de un PUT exitoso, re-sincronizamos desde el servidor
+      // carga denuevo el carrito
       const data: any = await fetchCartAPI(token ?? undefined);
       const mapped: Product[] = (Array.isArray(data) ? data : []).map(
         (it: any, idx: number) => ({
@@ -212,111 +211,107 @@ export default function Cart() {
   });
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.topHeader}>
-          <Text style={styles.headerText}>Carrito de compras</Text>
-        </View>
+    <SafeAreaProvider style={styles.safeArea}>
+      <View style={styles.topHeader}>
+        <Text style={styles.headerText}>Carrito de compras</Text>
+      </View>
 
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-          {cartProducts.length === 0 ? (
-            <Text style={styles.emptyText}>Tu carrito está vacío</Text>
-          ) : (
-            cartProducts.map((product: Product) => (
-              <View key={product.id} style={styles.productCard}>
-                <View style={styles.productInfo}>
-                  <Image source={product.image} style={styles.productImage} />
-                  <View style={styles.productDetails}>
-                    <Text style={styles.productName}>{product.name}</Text>
-                    <Text style={styles.productPrice}>
-                      Precio unitario: ${product.price.toFixed(2)}
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        {cartProducts.length === 0 ? (
+          <Text style={styles.emptyText}>Tu carrito está vacío</Text>
+        ) : (
+          cartProducts.map((product: Product) => (
+            <View key={product.id} style={styles.productCard}>
+              <View style={styles.productInfo}>
+                <Image source={product.image} style={styles.productImage} />
+                <View style={styles.productDetails}>
+                  <Text style={styles.productName}>{product.name}</Text>
+                  <Text style={styles.productPrice}>
+                    Precio unitario: ${product.price.toFixed(2)}
+                  </Text>
+
+                  <View style={styles.quantityControl}>
+                    <Pressable
+                      style={styles.quantityButton}
+                      onPress={() => updateQuantity(product.id, -1)}
+                    >
+                      <Text style={styles.quantityButtonText}>-</Text>
+                    </Pressable>
+                    <Text style={styles.quantityText}>
+                      {product.quantity || 1}
                     </Text>
-
-                    <View style={styles.quantityControl}>
-                      <Pressable
-                        style={styles.quantityButton}
-                        onPress={() => updateQuantity(product.id, -1)}
-                      >
-                        <Text style={styles.quantityButtonText}>-</Text>
-                      </Pressable>
-                      <Text style={styles.quantityText}>
-                        {product.quantity || 1}
-                      </Text>
-                      <Pressable
-                        style={styles.quantityButton}
-                        onPress={() => updateQuantity(product.id, 1)}
-                      >
-                        <Text style={styles.quantityButtonText}>+</Text>
-                      </Pressable>
-                    </View>
+                    <Pressable
+                      style={styles.quantityButton}
+                      onPress={() => updateQuantity(product.id, 1)}
+                    >
+                      <Text style={styles.quantityButtonText}>+</Text>
+                    </Pressable>
                   </View>
                 </View>
-
-                <View>
-                  <Text style={styles.subtotalText}>
-                    ${(product.price * (product.quantity || 1)).toFixed(2)}
-                  </Text>
-                  <Pressable
-                    style={styles.deleteButton}
-                    onPress={async () => {
-                      try {
-                        setSyncing(true);
-                        const backendId =
-                          (product as any).productId ?? String(product.id);
-                        // llamar api
-                        await updateCartAPI(
-                          String(backendId),
-                          0,
-                          token ?? undefined
-                        );
-
-                        // ok ? lo borra xd
-                        const data: any = await fetchCartAPI(
-                          token ?? undefined
-                        );
-                        const mapped: Product[] = (
-                          Array.isArray(data) ? data : []
-                        ).map((it: any, idx: number) => ({
-                          id: Number(it.product_id) || idx + 1,
-                          productId: it.product_id,
-                          name: it.name || it.product_name || "Producto",
-                          description: it.description || "",
-                          price: parseFloat(it.price) || 0,
-                          image:
-                            it.image_url && it.image_url.startsWith("http")
-                              ? { uri: it.image_url }
-                              : require("@/assets/images/products/lata-gato.png"),
-                          category: it.category_name || "",
-                          quantity: Number(it.quantity) || 1,
-                        }));
-
-                        replaceCart(mapped);
-                      } catch (err: any) {
-                        console.error("Error removing item from cart:", err);
-                        Alert.alert(
-                          "Error",
-                          err?.message || "No se pudo eliminar el producto"
-                        );
-                      } finally {
-                        setSyncing(false);
-                      }
-                    }}
-                  >
-                    <Text style={styles.deleteButtonText}>Eliminar</Text>
-                  </Pressable>
-                </View>
               </View>
-            ))
-          )}
-        </ScrollView>
 
-        <View style={styles.bottomBar}>
-          <Text style={styles.totalText}>Total: ${calculateTotal()}</Text>
-          <Button type="primary" onPress={handlePay} style={{ minWidth: 100 }}>
-            Pagar
-          </Button>
-        </View>
-      </SafeAreaView>
+              <View>
+                <Text style={styles.subtotalText}>
+                  ${(product.price * (product.quantity || 1)).toFixed(2)}
+                </Text>
+                <Pressable
+                  style={styles.deleteButton}
+                  onPress={async () => {
+                    try {
+                      setSyncing(true);
+                      const backendId =
+                        (product as any).productId ?? String(product.id);
+                      // llamar api
+                      await updateCartAPI(
+                        String(backendId),
+                        0,
+                        token ?? undefined
+                      );
+
+                      // ok? lo borra xd
+                      const data: any = await fetchCartAPI(token ?? undefined);
+                      const mapped: Product[] = (
+                        Array.isArray(data) ? data : []
+                      ).map((it: any, idx: number) => ({
+                        id: Number(it.product_id) || idx + 1,
+                        productId: it.product_id,
+                        name: it.name || it.product_name || "Producto",
+                        description: it.description || "",
+                        price: parseFloat(it.price) || 0,
+                        image:
+                          it.image_url && it.image_url.startsWith("http")
+                            ? { uri: it.image_url }
+                            : require("@/assets/images/products/lata-gato.png"),
+                        category: it.category_name || "",
+                        quantity: Number(it.quantity) || 1,
+                      }));
+
+                      replaceCart(mapped);
+                    } catch (err: any) {
+                      console.error("Error removing item from cart:", err);
+                      Alert.alert(
+                        "Error",
+                        err?.message || "No se pudo eliminar el producto"
+                      );
+                    } finally {
+                      setSyncing(false);
+                    }
+                  }}
+                >
+                  <Text style={styles.deleteButtonText}>Eliminar</Text>
+                </Pressable>
+              </View>
+            </View>
+          ))
+        )}
+      </ScrollView>
+
+      <View style={styles.bottomBar}>
+        <Text style={styles.totalText}>Total: ${calculateTotal()}</Text>
+        <Button type="primary" onPress={handlePay} style={{ minWidth: 100 }}>
+          Pagar
+        </Button>
+      </View>
     </SafeAreaProvider>
   );
 }
