@@ -9,8 +9,6 @@ export const loginRequest = async (email: string, password: string) => {
 
   const data = await response.json();
 
-  // data = { ok, user, token }
-
   if (!response.ok || !data.ok) {
     throw new Error(data.message || "Credenciales inválidas");
   }

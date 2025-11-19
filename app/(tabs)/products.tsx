@@ -44,7 +44,7 @@ export default function ProductsScreen() {
     load();
   };
 
-  // Resolve image: if image_url appears to be an http url use uri, otherwise try local mapping
+  // Resolve image if image_url appears to be an http url use uri
   const resolveImage = (image_key?: string) => {
     if (!image_key) return require("@/assets/images/products/lata-gato.png");
     if (image_key.startsWith("http")) return { uri: image_key };
@@ -76,8 +76,6 @@ export default function ProductsScreen() {
         image: resolveImage(p.image_url),
         category: "",
         quantity: 1,
-        // keep backend id for navigation
-        // @ts-ignore: extended property for navigation only
         productId: p.product_id,
       }));
       setProducts(parsed);
@@ -99,7 +97,7 @@ export default function ProductsScreen() {
     };
   }, [load]);
 
-  // Re-fetch when screen is focused (e.g., after navigating back from add-product)
+  // usefect to reaload products when screen is focused
   useFocusEffect(
     useCallback(() => {
       load();
@@ -107,7 +105,7 @@ export default function ProductsScreen() {
   );
 
   const [filter, setFilter] = useState<"all" | "cheap" | "expensive">("all");
-  const { cartProducts, addToCart } = useCart(); // ✅ usamos el hook
+  const { cartProducts, addToCart } = useCart();
   const router = useRouter();
   const { token } = useAuthStore();
 
@@ -132,11 +130,9 @@ export default function ProductsScreen() {
       return;
     }
 
+    // api
     try {
-      // Llamar al API primero
       await addToCartAPI(backendProductId, qtyToAdd, token ?? undefined);
-
-      // Si ok, actualizar carrito local
       const existing = cartProducts.find((p) => p.id === product.id);
       if (existing) {
         addToCart({
@@ -293,7 +289,6 @@ export default function ProductsScreen() {
               renderItem={({ item }) => (
                 <Pressable
                   onPress={() =>
-                    // cast a any to satisfy expo-router strict types
                     router.push(
                       `/product/${(item as any).productId}` as unknown as any
                     )

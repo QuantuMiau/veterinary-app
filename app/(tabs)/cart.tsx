@@ -19,6 +19,8 @@ import { useCallback, useState } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { useFocusEffect } from "@react-navigation/native";
 import { fetchCartAPI, updateCartAPI } from "@/services/cartService";
+import { useStripe } from "@stripe/stripe-react-native";
+import { createOrder } from "@/services/orderService";
 
 export default function Cart() {
   const colorScheme = useColorScheme();
@@ -30,8 +32,11 @@ export default function Cart() {
   const { replaceCart } = useCart();
   const { token } = useAuthStore();
   const [syncing, setSyncing] = useState(false);
+  const { initPaymentSheet, presentPaymentSheet } = useStripe();
+  const [loading, setLoading] = useState(false);
+  const [paymentIntentId, setPaymentIntentId] = useState<string>("");
 
-  // Sync cart from server when this screen is focused
+  // Sync cart from server when this screen is focused idk
   useFocusEffect(
     useCallback(() => {
       let mounted = true;
@@ -115,8 +120,64 @@ export default function Cart() {
     }
   };
 
-  const handlePay = () => {
-    router.push("/payment/payment");
+  // paysheet
+  const initializePaymentSheet = async (): Promise<boolean> => {
+    setLoading(true);
+
+    try {
+      // hay que convertir de string a entero y deecimal a centavos
+      const amount = parseInt(calculateTotal().replace(".", ""));
+      const response = await fetch(
+        "http://192.168.1.18:3000/api/payments/create-payment-intent",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: amount }),
+        }
+      );
+
+      const { clientSecret, paymentIntentId } = await response.json();
+      setPaymentIntentId(paymentIntentId);
+
+      const { error } = await initPaymentSheet({
+        paymentIntentClientSecret: clientSecret,
+        merchantDisplayName: "Clinica Veterinaria San Franscisco de asis",
+      });
+
+      if (error) {
+        alert(`Error al inicializar: ${error.message}`);
+        return false;
+      }
+
+      return true;
+    } catch (err: any) {
+      console.error("initializePaymentSheet error:", err);
+      alert("No se pudo inicializar el pago. Intenta más tarde.");
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const openPaymentSheet = async () => {
+    const { error } = await presentPaymentSheet();
+    if (error) alert(`Pago fallido: ${error.message}`);
+    else {
+      try {
+        await createOrder(token ?? undefined);
+        alert("¡Orden creada exitosamente!");
+
+        replaceCart([]);
+      } catch (err: any) {
+        alert(err.message || "No se pudo crear la orden");
+      }
+    }
+  };
+
+  const pagar = async () => {
+    const ready = await initializePaymentSheet();
+    if (!ready) return;
+    await openPaymentSheet();
   };
 
   const styles = StyleSheet.create({
@@ -306,12 +367,20 @@ export default function Cart() {
         )}
       </ScrollView>
 
-      <View style={styles.bottomBar}>
-        <Text style={styles.totalText}>Total: ${calculateTotal()}</Text>
-        <Button type="primary" onPress={handlePay} style={{ minWidth: 100 }}>
-          Pagar
-        </Button>
-      </View>
+      {cartProducts.length > 0 && (
+        <View style={styles.bottomBar}>
+          <Text style={styles.totalText}>Total: ${calculateTotal()}</Text>
+
+          <Button
+            type="primary"
+            onPress={pagar}
+            disabled={loading || syncing}
+            style={{ minWidth: 100 }}
+          >
+            Pagar
+          </Button>
+        </View>
+      )}
     </SafeAreaProvider>
   );
 }
