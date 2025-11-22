@@ -1,4 +1,4 @@
-const API_URL = "http://192.168.1.69:3000/user";
+const API_URL = "http://192.168.10.14:3000/user";
 
 export const fetchCurrentUser = async (token?: string) => {
   const res = await fetch(`${API_URL}/`, {
@@ -11,7 +11,7 @@ export const fetchCurrentUser = async (token?: string) => {
 
   const data = await res.json().catch(() => null);
 
-  // If 404 (not found) return null to indicate no user
+  // if user nt fnd  == 404
   if (res.status === 404) return null;
 
   if (!res.ok) {

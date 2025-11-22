@@ -1,4 +1,4 @@
-const API_URL = "http://192.168.1.69:3000/cart";
+const API_URL = "http://192.168.10.14:3000/cart";
 
 export const addToCartAPI = async (
   productId: string,

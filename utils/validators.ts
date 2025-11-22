@@ -14,7 +14,7 @@ export const nameValidator = (name: string): boolean => {
 };
 
 export const phoneValidator = (phone: string) => {
-  const phoneRegex = /^\+?[0-9]{7,15}$/;
+  const phoneRegex = /^[0-9]{10}$/;
   return phoneRegex.test(phone);
 };
 

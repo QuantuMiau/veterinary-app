@@ -1,4 +1,4 @@
-const API_URL = "http://192.168.1.69:3000/order";
+const API_URL = "http://192.168.10.14:3000/order";
 
 export const fetchUserOrders = async (token?: string) => {
   const res = await fetch(`${API_URL}/user`, {

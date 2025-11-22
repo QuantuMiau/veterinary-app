@@ -10,7 +10,7 @@ export interface RawProduct {
   category: string;
 }
 
-const API_URL = "http://192.168.1.69:3000/product";
+const API_URL = "http://192.168.10.14:3000/product";
 
 export const fetchProducts = async (): Promise<RawProduct[]> => {
   const res = await fetch(API_URL);

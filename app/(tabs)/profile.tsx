@@ -168,7 +168,7 @@ export default function Profile() {
       return;
     }
     if (formPhone && !phoneValidator(formPhone)) {
-      setFormError("Teléfono inválido");
+      setFormError("Teléfono inválido. Debe contener exactamente 10 dígitos");
       return;
     }
 
@@ -380,11 +380,12 @@ export default function Profile() {
                       autoCapitalize="none"
                     />
                     <TextInput
-                      placeholder="Teléfono (opcional)"
+                      placeholder="Teléfono (10 dígitos)"
                       style={styles.input}
                       value={formPhone}
                       onChangeText={setFormPhone}
                       keyboardType="phone-pad"
+                      maxLength={10}
                     />
                     {formError ? (
                       <Text style={styles.errorText}>{formError}</Text>

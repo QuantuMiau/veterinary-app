@@ -130,7 +130,7 @@ export default function Cart() {
       // hay que convertir de string a entero y deecimal a centavos
       const amount = parseInt(calculateTotal().replace(".", ""));
       const response = await fetch(
-        "http://192.168.1.69:3000/api/payments/create-payment-intent",
+        "http://192.168.10.14:3000/api/payments/create-payment-intent",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
