@@ -1,11 +1,16 @@
 export interface RawProduct {
   product_id: string;
   name: string;
-  price: string; // comes as string from API
-  image_url?: string;
+  description: string;
+  category_id: number;
+  subcategory_id: number;
+  price: string;
+  stock: number;
+  image_url: string;
+  category: string;
 }
 
-const API_URL = "http://192.168.1.18:3000/product";
+const API_URL = "http://192.168.1.69:3000/product";
 
 export const fetchProducts = async (): Promise<RawProduct[]> => {
   const res = await fetch(API_URL);

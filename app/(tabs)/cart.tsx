@@ -12,6 +12,7 @@ import {
   Text,
   View,
   SafeAreaView,
+  Modal,
 } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useCart, Product } from "@/hooks/use-cart";
@@ -35,6 +36,7 @@ export default function Cart() {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [loading, setLoading] = useState(false);
   const [paymentIntentId, setPaymentIntentId] = useState<string>("");
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
 
   // Sync cart from server when this screen is focused idk
   useFocusEffect(
@@ -128,7 +130,7 @@ export default function Cart() {
       // hay que convertir de string a entero y deecimal a centavos
       const amount = parseInt(calculateTotal().replace(".", ""));
       const response = await fetch(
-        "http://192.168.1.18:3000/api/payments/create-payment-intent",
+        "http://192.168.1.69:3000/api/payments/create-payment-intent",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -165,7 +167,7 @@ export default function Cart() {
     else {
       try {
         await createOrder(token ?? undefined);
-        alert("¡Orden creada exitosamente!");
+        setSuccessModalVisible(true);
 
         replaceCart([]);
       } catch (err: any) {
@@ -269,6 +271,43 @@ export default function Cart() {
       justifyContent: "space-between",
     },
     totalText: { fontSize: 16, fontFamily: "LeagueSpartan_500Medium" },
+    modalContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+    },
+    modalContent: {
+      width: "80%",
+      backgroundColor: "#fff",
+      borderRadius: 10,
+      padding: 20,
+      alignItems: "center",
+      elevation: 5,
+    },
+    modalTitle: {
+      fontSize: 20,
+      fontFamily: "LeagueSpartan_500Medium",
+      marginBottom: 10,
+      textAlign: "center",
+    },
+    modalMessage: {
+      fontSize: 16,
+      fontFamily: "LeagueSpartan_400Regular",
+      textAlign: "center",
+      marginBottom: 20,
+    },
+    modalButton: {
+      backgroundColor: "#0371ee",
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderRadius: 5,
+    },
+    modalButtonText: {
+      color: "#fff",
+      fontFamily: "LeagueSpartan_500Medium",
+      fontSize: 16,
+    },
   });
 
   return (
@@ -381,6 +420,30 @@ export default function Cart() {
           </Button>
         </View>
       )}
+      {/* Modal de pago exitosito */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={successModalVisible}
+        onRequestClose={() => setSuccessModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>¡Orden creada exitosamente!</Text>
+            <Text style={styles.modalMessage}>Gracias por tu compra.</Text>
+            <Pressable
+              style={styles.modalButton}
+              onPress={() => setSuccessModalVisible(false)}
+            >
+              <Text style={styles.modalButtonText}>Cerrar</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaProvider>
   );
 }
+
+//(\___/)  <(Hi!)
+//(O w O)/
+//(")_(")
