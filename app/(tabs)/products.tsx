@@ -9,6 +9,7 @@ import {
   useColorScheme,
   View,
   Dimensions,
+  ScrollView,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -44,12 +45,10 @@ export default function ProductsScreen() {
     load();
   };
 
-  // Resolve image if image_url appears to be an http url use uri
   const resolveImage = (image_key?: string) => {
     if (!image_key) return require("@/assets/images/products/lata-gato.png");
     if (image_key.startsWith("http")) return { uri: image_key };
 
-    // Map known keys to local assets (extend as needed)
     const map: Record<string, any> = {
       lata_gato: require("@/assets/images/products/lata-gato.png"),
       electrolito_perro: require("@/assets/images/products/electrolito-perro.png"),
@@ -71,10 +70,10 @@ export default function ProductsScreen() {
       const parsed: CartProduct[] = data.map((p, idx) => ({
         id: idx + 1,
         name: p.name,
-        description: "",
+        description: p.description || "",
         price: parseFloat(p.price) || 0,
         image: resolveImage(p.image_url),
-        category: "",
+        category: p.category || "",
         quantity: 1,
         productId: p.product_id,
       }));
@@ -97,26 +96,26 @@ export default function ProductsScreen() {
     };
   }, [load]);
 
-  // usefect to reaload products when screen is focused
   useFocusEffect(
     useCallback(() => {
       load();
     }, [load])
   );
 
-  const [filter, setFilter] = useState<"all" | "cheap" | "expensive">("all");
+  const [filter, setFilter] = useState<string>("Todos");
   const { cartProducts, addToCart } = useCart();
   const router = useRouter();
   const { token } = useAuthStore();
+
+  const categories = ["Todos", "Alimento", "Medicina", "Juguete", "Accesorios"];
 
   const filteredProducts = products.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  const filteredByFilter = filteredProducts.filter((p) => {
-    if (filter === "cheap") return p.price < 50;
-    if (filter === "expensive") return p.price >= 50;
-    return true;
+  const filteredByCategory = filteredProducts.filter((p) => {
+    if (filter === "Todos") return true;
+    return p.category === filter;
   });
 
   const [addedIds, setAddedIds] = useState<number[]>([]);
@@ -130,7 +129,6 @@ export default function ProductsScreen() {
       return;
     }
 
-    // api
     try {
       await addToCartAPI(backendProductId, qtyToAdd, token ?? undefined);
       const existing = cartProducts.find((p) => p.id === product.id);
@@ -172,21 +170,21 @@ export default function ProductsScreen() {
       marginTop: 10,
       fontFamily: "LeagueSpartan_400Regular",
     },
-    filterContainer: {
+    categoryContainer: {
       flexDirection: "row",
-      justifyContent: "space-around",
       marginVertical: 10,
     },
-    filterButton: {
+    categoryButton: {
       paddingHorizontal: 12,
       borderRadius: 8,
       paddingVertical: 6,
+      marginRight: 10,
     },
-    filterText: {
-      fontFamily: "LeagueSpartan_400Regular",
+    categoryText: {
+      fontFamily: "LeagueSpartan_500Medium",
       color: "rgba(255,255,255,0.5)",
     },
-    filterTextActive: {
+    categoryTextActive: {
       fontFamily: "LeagueSpartan_500Medium",
       color: "white",
     },
@@ -244,23 +242,29 @@ export default function ProductsScreen() {
             style={styles.searchInput}
           />
 
-          <View style={styles.filterContainer}>
-            {["all", "cheap", "expensive"].map((f) => (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.categoryContainer}
+          >
+            {categories.map((category) => (
               <Pressable
-                key={f}
-                onPress={() => setFilter(f as "all" | "cheap" | "expensive")}
-                style={styles.filterButton}
+                key={category}
+                onPress={() => setFilter(category)}
+                style={styles.categoryButton}
               >
                 <Text
                   style={
-                    filter === f ? styles.filterTextActive : styles.filterText
+                    filter === category
+                      ? styles.categoryTextActive
+                      : styles.categoryText
                   }
                 >
-                  {f === "all" ? "Todos" : f === "cheap" ? "Baratos" : "Caros"}
+                  {category}
                 </Text>
               </Pressable>
             ))}
-          </View>
+          </ScrollView>
         </View>
 
         <View style={{ flex: 1, backgroundColor: colors.background }}>
@@ -275,7 +279,7 @@ export default function ProductsScreen() {
           ) : (
             <FlatList
               contentContainerStyle={styles.grid}
-              data={filteredByFilter}
+              data={filteredByCategory}
               keyExtractor={(item) => item.id.toString()}
               numColumns={2}
               columnWrapperStyle={{ justifyContent: "space-between" }}
@@ -331,3 +335,6 @@ export default function ProductsScreen() {
     </SafeAreaProvider>
   );
 }
+//(\___/)  <(Hi!)
+//(O w O)/
+//(")_(")
