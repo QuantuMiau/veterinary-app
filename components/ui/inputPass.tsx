@@ -1,4 +1,4 @@
-import { globalStyles } from "@/styles/globalStyles";
+import { useGlobalStyles } from "@/styles/globalStyles";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import React, { useState } from "react";
 import {
@@ -15,7 +15,7 @@ interface InputProps extends TextInputProps {
 }
 
 export const InputPassword = ({ label, ...rest }: InputProps) => {
-  const globalS = globalStyles();
+  const globalS = useGlobalStyles();
   const [showPassword, setShowPassword] = useState(true);
 
   return (
