@@ -173,9 +173,9 @@ export default function Profile() {
     }
 
     const body = {
-      name: formName,
-      lastName: formLastName,
-      motherLastName: formMotherName,
+      first_name: formName,
+      last_name: formLastName,
+      mother_name: formMotherName,
       email: formEmail,
       phone: formPhone,
       password: null,
@@ -257,7 +257,7 @@ export default function Profile() {
           if (raw) {
             setDataUser({
               id: String(raw.user_id || raw.id || ""),
-              name: raw.name || "",
+              name: raw.first_name || raw.name || "",
               lastName: raw.last_name || raw.lastName || "",
               motherLastName: raw.mother_name || raw.motherName || "",
               email: raw.email || "",

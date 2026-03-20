@@ -1,7 +1,7 @@
-const API_URL = "http://192.168.1.69:3000/cart";
+const API_URL = "http://192.168.1.6:3000/cart";
 
 export const addToCartAPI = async (
-  productId: string,
+  conceptId: string | number,
   quantity = 1,
   token?: string
 ) => {
@@ -11,7 +11,7 @@ export const addToCartAPI = async (
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    body: JSON.stringify({ productId, quantity }),
+    body: JSON.stringify({ conceptId, quantity }),
   });
 
   const data = await res.json().catch(() => null);
@@ -44,7 +44,7 @@ export const fetchCartAPI = async (token?: string) => {
 };
 
 export const updateCartAPI = async (
-  productId: string,
+  conceptId: string | number,
   quantity: number,
   token?: string
 ) => {
@@ -54,7 +54,30 @@ export const updateCartAPI = async (
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    body: JSON.stringify({ productId, quantity }),
+    body: JSON.stringify({ conceptId, quantity }),
+  });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    const msg = data?.message || `HTTP ${res.status}`;
+    throw new Error(msg);
+  }
+
+  return data;
+};
+
+export const deleteFromCartAPI = async (
+  conceptId: string | number,
+  token?: string
+) => {
+  const res = await fetch(API_URL, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify({ conceptId }),
   });
 
   const data = await res.json().catch(() => null);

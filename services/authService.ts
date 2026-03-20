@@ -1,4 +1,4 @@
-const API_URL = "http://192.168.1.69:3000/user";
+const API_URL = "http://192.168.1.6:3000/user";
 
 export const loginRequest = async (email: string, password: string) => {
   const response = await fetch(`${API_URL}/login`, {
@@ -17,9 +17,9 @@ export const loginRequest = async (email: string, password: string) => {
 };
 
 export const registerRequest = async (
-  name: string,
-  lastName: string,
-  motherLastname: string,
+  first_name: string,
+  last_name: string,
+  mother_name: string,
   email: string,
   phone: string,
   password: string
@@ -28,9 +28,9 @@ export const registerRequest = async (
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      name,
-      lastName,
-      motherLastname,
+      first_name,
+      last_name,
+      mother_name,
       email,
       phone,
       password,
@@ -39,7 +39,7 @@ export const registerRequest = async (
 
   const data = await response.json();
 
-  if (!response.ok || !data.success) {
+  if (!response.ok || !data.ok) {
     throw new Error(data.message || "Error en el registro");
   }
 

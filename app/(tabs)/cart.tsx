@@ -19,7 +19,11 @@ import { useCart, Product } from "@/hooks/use-cart";
 import { useCallback, useState } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { useFocusEffect } from "@react-navigation/native";
-import { fetchCartAPI, updateCartAPI } from "@/services/cartService";
+import {
+  deleteFromCartAPI,
+  fetchCartAPI,
+  updateCartAPI,
+} from "@/services/cartService";
 import { useStripe } from "@stripe/stripe-react-native";
 import { createOrder } from "@/services/orderService";
 
@@ -50,8 +54,8 @@ export default function Cart() {
 
           const mapped: Product[] = (Array.isArray(data) ? data : []).map(
             (it: any, idx: number) => ({
-              id: Number(it.product_id) || idx + 1,
-              productId: it.product_id,
+              id: Number(it.concept_id) || idx + 1,
+              productId: String(it.concept_id),
               name: it.name || it.product_name || "Producto",
               description: it.description || "",
               price: parseFloat(it.price) || 0,
@@ -59,7 +63,7 @@ export default function Cart() {
                 it.image_url && it.image_url.startsWith("http")
                   ? { uri: it.image_url }
                   : require("@/assets/images/products/lata-gato.png"),
-              category: it.category_name || "",
+              category: it.category || "",
               quantity: Number(it.quantity) || 1,
             })
           );
@@ -99,8 +103,8 @@ export default function Cart() {
       const data: any = await fetchCartAPI(token ?? undefined);
       const mapped: Product[] = (Array.isArray(data) ? data : []).map(
         (it: any, idx: number) => ({
-          id: Number(it.product_id) || idx + 1,
-          productId: it.product_id,
+          id: Number(it.concept_id) || idx + 1,
+          productId: String(it.concept_id),
           name: it.name || it.product_name || "Producto",
           description: it.description || "",
           price: parseFloat(it.price) || 0,
@@ -108,7 +112,7 @@ export default function Cart() {
             it.image_url && it.image_url.startsWith("http")
               ? { uri: it.image_url }
               : require("@/assets/images/products/lata-gato.png"),
-          category: it.category_name || "",
+          category: it.category || "",
           quantity: Number(it.quantity) || 1,
         })
       );
@@ -130,13 +134,22 @@ export default function Cart() {
       // hay que convertir de string a entero y deecimal a centavos
       const amount = parseInt(calculateTotal().replace(".", ""));
       const response = await fetch(
-        "http://192.168.1.69:3000/api/payments/create-payment-intent",
+        "http://192.168.1.6:3000/payment/intent",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
           body: JSON.stringify({ amount: amount }),
         }
       );
+
+      if (!response.ok) {
+        const text = await response.text();
+        console.error("Payment Intent Error Response:", text);
+        throw new Error(`Error del servidor: ${response.status}`);
+      }
 
       const { clientSecret, paymentIntentId } = await response.json();
       setPaymentIntentId(paymentIntentId);
@@ -166,7 +179,7 @@ export default function Cart() {
     if (error) alert(`Pago cancelado`);
     else {
       try {
-        await createOrder(token ?? undefined);
+        await createOrder("Stripe", token ?? undefined);
         setSuccessModalVisible(true);
 
         replaceCart([]);
@@ -361,10 +374,9 @@ export default function Cart() {
                       setSyncing(true);
                       const backendId =
                         (product as any).productId ?? String(product.id);
-                      // llamar api yo kese
-                      await updateCartAPI(
+                      // llamar api
+                      await deleteFromCartAPI(
                         String(backendId),
-                        0,
                         token ?? undefined
                       );
 
@@ -373,8 +385,8 @@ export default function Cart() {
                       const mapped: Product[] = (
                         Array.isArray(data) ? data : []
                       ).map((it: any, idx: number) => ({
-                        id: Number(it.product_id) || idx + 1,
-                        productId: it.product_id,
+                        id: Number(it.concept_id) || idx + 1,
+                        productId: String(it.concept_id),
                         name: it.name || it.product_name || "Producto",
                         description: it.description || "",
                         price: parseFloat(it.price) || 0,
@@ -382,7 +394,7 @@ export default function Cart() {
                           it.image_url && it.image_url.startsWith("http")
                             ? { uri: it.image_url }
                             : require("@/assets/images/products/lata-gato.png"),
-                        category: it.category_name || "",
+                        category: it.category || "",
                         quantity: Number(it.quantity) || 1,
                       }));
 

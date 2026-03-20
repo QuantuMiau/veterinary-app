@@ -63,8 +63,8 @@ export default function Orders() {
               id: idx + 1,
               orderNumber: it.order_id || it.orderNumber || `PED-${idx + 1}`,
               date: it.order_date || it.date || "",
-              status: it.status || it.order_status || "Pendiente de pago",
-              total: parseFloat(it.total) || 0,
+              status: it.order_status || it.status || "Pendiente de pago",
+              total: parseFloat(it.order_total || it.total || it.line_total) || 0,
               image:
                 (it.image_url &&
                   it.image_url.startsWith("http") && { uri: it.image_url }) ||

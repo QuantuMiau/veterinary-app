@@ -75,7 +75,7 @@ export default function ProductsScreen() {
         image: resolveImage(p.image_url),
         category: p.category || "",
         quantity: 1,
-        productId: p.product_id,
+        productId: String(p.concept_id),
       }));
       setProducts(parsed);
       setError(null);

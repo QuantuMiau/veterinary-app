@@ -26,9 +26,9 @@ export default function register() {
   const router = useRouter();
 
   // ** states
-  const [name, setName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [motherLastName, setMotherLastName] = useState("");
+  const [first_name, setFirstName] = useState("");
+  const [last_name, setLastName] = useState("");
+  const [mother_name, setMotherName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -39,9 +39,9 @@ export default function register() {
   // * functions
   function register() {
     const errorVal = registerValidator(
-      name,
-      lastName,
-      motherLastName,
+      first_name,
+      last_name,
+      mother_name,
       email,
       phone,
       password
@@ -55,7 +55,7 @@ export default function register() {
     setLoadingButton(true);
     setErroMsg("");
 
-    registerRequest(name, lastName, motherLastName, email, phone, password)
+    registerRequest(first_name, last_name, mother_name, email, phone, password)
       .then((res) => {
         setLoadingButton(false);
         Alert.alert("Registro exitoso", "Ahora puedes iniciar sesión", [
@@ -75,9 +75,9 @@ export default function register() {
   }
 
   function clearInfo() {
-    setName("");
+    setFirstName("");
     setLastName("");
-    setMotherLastName("");
+    setMotherName("");
     setEmail("");
     setPhone("");
     setPassword("");
@@ -100,8 +100,8 @@ export default function register() {
             <View>
               <Text style={globalS.label}>Nombre</Text>
               <TextInput
-                value={name}
-                onChangeText={setName}
+                value={first_name}
+                onChangeText={setFirstName}
                 placeholder="Mauricio"
                 style={globalS.input}
               />
@@ -109,7 +109,7 @@ export default function register() {
             <View>
               <Text style={globalS.label}>Apellido paterno</Text>
               <TextInput
-                value={lastName}
+                value={last_name}
                 onChangeText={setLastName}
                 placeholder="Esperon"
                 style={globalS.input}
@@ -119,8 +119,8 @@ export default function register() {
             <View>
               <Text style={globalS.label}>Apellido materno</Text>
               <TextInput
-                value={motherLastName}
-                onChangeText={setMotherLastName}
+                value={mother_name}
+                onChangeText={setMotherName}
                 placeholder="Andrade"
                 style={globalS.input}
               />

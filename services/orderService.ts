@@ -1,7 +1,7 @@
-const API_URL = "http://192.168.1.69:3000/order";
+const API_URL = "http://192.168.1.6:3000/order";
 
 export const fetchUserOrders = async (token?: string) => {
-  const res = await fetch(`${API_URL}/user`, {
+  const res = await fetch(`${API_URL}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -24,9 +24,9 @@ export const fetchUserOrders = async (token?: string) => {
   return data;
 };
 
-export const createOrder = async (token?: string) => {
-  const res = await fetch(`${API_URL}`, {
-    method: "POST",
+export const fetchOrderDetails = async (id: string | number, token?: string) => {
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -42,3 +42,24 @@ export const createOrder = async (token?: string) => {
 
   return data;
 };
+
+export const createOrder = async (paymentMethod: string, token?: string) => {
+  const res = await fetch(`${API_URL}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify({ paymentMethod }),
+  });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    const msg = data?.message || `HTTP ${res.status}`;
+    throw new Error(msg);
+  }
+
+  return data;
+};
+

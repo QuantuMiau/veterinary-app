@@ -61,24 +61,24 @@ export const loginValidator = (email: string, password: string): string => {
 };
 
 export const registerValidator = (
-  name: string,
-  lastName: string,
-  motherLastName: string,
+  first_name: string,
+  last_name: string,
+  mother_name: string,
   email: string,
   phone: string,
   password: string
 ): string => {
   if (
-    isEmpty(name) ||
-    isEmpty(lastName) ||
-    isEmpty(motherLastName) ||
+    isEmpty(first_name) ||
+    isEmpty(last_name) ||
+    isEmpty(mother_name) ||
     isEmpty(email) ||
     isEmpty(phone) ||
     isEmpty(password)
   ) {
     return "Ingrese todos los datos";
   }
-  if (!nameValidator(name)) {
+  if (!nameValidator(first_name)) {
     return "Nombre debe tener mínimo 2 caracteres";
   }
   if (!checkEmail(email)) {

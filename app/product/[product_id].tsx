@@ -130,7 +130,7 @@ export default function ProductDetail() {
             ${parseFloat(product.price).toFixed(2)}
           </Text>
           <Text style={styles.category}>
-            {product.category_name} • {product.subcategory_name}
+            {product.category} • {product.subcategory}
           </Text>
           <Text style={styles.desc}>{product.description}</Text>
         </View>
@@ -138,7 +138,7 @@ export default function ProductDetail() {
         <View style={styles.stockContainer}>
           <Text style={styles.stockText}>Stock: {product.stock}</Text>
           <Text style={styles.statusText}>
-            Estado: {product.status ? "Disponible" : "No disponible"}
+            Estado: {product.active ? "Disponible" : "No disponible"}
           </Text>
         </View>
 
@@ -174,7 +174,7 @@ export default function ProductDetail() {
         <Pressable
           style={[styles.addBtn, { opacity: product.stock > 0 ? 1 : 0.6 }]}
           onPress={async () => {
-            if (!product.product_id) {
+            if (!product.concept_id) {
               Alert.alert("Error", "ID de producto no disponible");
               return;
             }
@@ -190,12 +190,12 @@ export default function ProductDetail() {
             const qtyToAdd = quantity;
             try {
               await addToCartAPI(
-                String(product.product_id),
+                String(product.concept_id),
                 qtyToAdd,
                 token ?? undefined
               );
 
-              const localId = Number(product.product_id) || Date.now();
+              const localId = Number(product.concept_id) || Date.now();
               const localProduct = {
                 id: localId,
                 name: product.name,
@@ -205,7 +205,7 @@ export default function ProductDetail() {
                   product.image_url && product.image_url.startsWith("http")
                     ? { uri: product.image_url }
                     : require("@/assets/images/products/lata-gato.png"),
-                category: product.category_name || "",
+                category: product.category || "",
               };
 
               addToCart(localProduct as any, qtyToAdd);

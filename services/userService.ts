@@ -1,7 +1,7 @@
-const API_URL = "http://192.168.1.69:3000/user";
+const API_URL = "http://192.168.1.6:3000/user";
 
 export const fetchCurrentUser = async (token?: string) => {
-  const res = await fetch(`${API_URL}/`, {
+  const res = await fetch(`${API_URL}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -11,7 +11,6 @@ export const fetchCurrentUser = async (token?: string) => {
 
   const data = await res.json().catch(() => null);
 
-  // If 404 (not found) return null to indicate no user
   if (res.status === 404) return null;
 
   if (!res.ok) {
@@ -41,3 +40,24 @@ export const updateCurrentUser = async (body: any, token?: string) => {
 
   return data;
 };
+
+export const updatePassword = async (password: string, token?: string) => {
+  const res = await fetch(`${API_URL}/password`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify({ password }),
+  });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    const msg = data?.message || `HTTP ${res.status}`;
+    throw new Error(msg);
+  }
+
+  return data;
+};
+
