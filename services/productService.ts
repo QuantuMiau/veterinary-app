@@ -13,7 +13,7 @@ export interface RawProduct {
   category_id: number;
 }
 
-const API_URL = "http://192.168.1.6:3000/product";
+const API_URL = "https://api-veterinary.onrender.com/product";
 
 export const fetchProducts = async (): Promise<RawProduct[]> => {
   const res = await fetch(API_URL);

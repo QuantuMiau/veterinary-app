@@ -1,4 +1,4 @@
-const API_URL = "http://192.168.1.6:3000/cart";
+const API_URL = "https://api-veterinary.onrender.com/cart";
 
 export const addToCartAPI = async (
   conceptId: string | number,

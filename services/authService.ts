@@ -1,4 +1,4 @@
-const API_URL = "http://192.168.1.6:3000/user";
+const API_URL = "https://api-veterinary.onrender.com/user";
 
 export const loginRequest = async (email: string, password: string) => {
   const response = await fetch(`${API_URL}/login`, {

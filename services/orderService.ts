@@ -1,4 +1,4 @@
-const API_URL = "http://192.168.1.6:3000/order";
+const API_URL = "https://api-veterinary.onrender.com/order";
 
 export const fetchUserOrders = async (token?: string) => {
   const res = await fetch(`${API_URL}`, {
