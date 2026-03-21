@@ -26,6 +26,7 @@ import {
 } from "@/services/cartService";
 import { useStripe } from "@stripe/stripe-react-native";
 import { createOrder } from "@/services/orderService";
+import { createPaymentIntent } from "@/services/paymentService";
 
 export default function Cart() {
   const colorScheme = useColorScheme();
@@ -132,26 +133,13 @@ export default function Cart() {
 
     try {
       // hay que convertir de string a entero y deecimal a centavos
-      const amount = parseInt(calculateTotal().replace(".", ""));
-      const response = await fetch(
-        "http://192.168.1.6:3000/payment/intent",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-          body: JSON.stringify({ amount: amount }),
-        }
-      );
+      const amount = Math.round(parseFloat(calculateTotal()) * 100);
+      console.log(`[Stripe] Iniciando pago por: ${amount} centavos ($${calculateTotal()})`);
 
-      if (!response.ok) {
-        const text = await response.text();
-        console.error("Payment Intent Error Response:", text);
-        throw new Error(`Error del servidor: ${response.status}`);
-      }
-
-      const { clientSecret, paymentIntentId } = await response.json();
+      const responseData = await createPaymentIntent(amount, token ?? undefined);
+      console.log("[Stripe] Payment Intent recibido:", responseData.paymentIntentId);
+      
+      const { clientSecret, paymentIntentId } = responseData;
       setPaymentIntentId(paymentIntentId);
 
       const { error } = await initPaymentSheet({
@@ -175,15 +163,20 @@ export default function Cart() {
   };
 
   const openPaymentSheet = async () => {
+    console.log("[Stripe] Presentando Payment Sheet...");
     const { error } = await presentPaymentSheet();
-    if (error) alert(`Pago cancelado`);
-    else {
+    if (error) {
+      console.warn("[Stripe] Pago cancelado o error:", error.message);
+      alert(`Pago cancelado`);
+    } else {
+      console.log("[Stripe] Pago completado con éxito!");
       try {
         await createOrder("Stripe", token ?? undefined);
         setSuccessModalVisible(true);
 
         replaceCart([]);
       } catch (err: any) {
+        console.error("[Stripe] Error creando orden:", err);
         alert(err.message || "No se pudo crear la orden");
       }
     }
